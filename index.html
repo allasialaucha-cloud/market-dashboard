@@ -475,20 +475,18 @@ const PORTFOLIO = [
 ];
 
 // ── NEWS CONFIG ────────────────────────────────────────────
-// RSS feeds via rss2json.com (free, no API key, works from GitHub Pages)
-const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+// Usa allorigins como proxy CORS — funciona desde GitHub Pages sin API key
+const CORS = 'https://api.allorigins.win/get?url=';
 const RSS_FEEDS = [
-  { name:'Reuters Markets',  domain:'reuters.com',  url:'https://feeds.reuters.com/reuters/businessNews' },
-  { name:'MarketWatch',      domain:'marketwatch.com', url:'https://feeds.marketwatch.com/marketwatch/topstories/' },
-  { name:'CNBC Finance',     domain:'cnbc.com',     url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664' },
-  { name:'Seeking Alpha',    domain:'seekingalpha.com', url:'https://seekingalpha.com/feed.xml' },
-  { name:'Infobae Economía', domain:'infobae.com',  url:'https://www.infobae.com/feeds/rss/economia/' },
+  { name:'Reuters Markets',   domain:'reuters.com',     url:'https://feeds.reuters.com/reuters/businessNews' },
+  { name:'MarketWatch',       domain:'marketwatch.com', url:'https://feeds.marketwatch.com/marketwatch/topstories/' },
+  { name:'CNBC Finance',      domain:'cnbc.com',        url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664' },
+  { name:'Infobae Economía',  domain:'infobae.com',     url:'https://www.infobae.com/feeds/rss/economia/' },
 ];
 
-// Fallback noticias (si fallan todos los feeds)
 const NEWS_FALLBACK = [
-  { src:'Reuters Markets', domain:'reuters.com', headline:'Mercados globales mixtos ante incertidumbre sobre tasas de interés', body:'Los principales índices bursátiles operan con movimientos moderados mientras los inversores aguardan señales de los bancos centrales sobre el rumbo de la política monetaria en los próximos meses.', time:'Hoy' },
-  { src:'MarketWatch', domain:'marketwatch.com', headline:'Tecnológicas lideran las ganancias en Wall Street esta semana', body:'Las acciones del sector tecnológico encabezan el alza en los mercados estadounidenses, impulsadas por resultados corporativos mejores a los esperados y perspectivas positivas en inteligencia artificial.', time:'Hoy' },
+  { src:'Reuters Markets', domain:'reuters.com', headline:'Mercados globales mixtos ante incertidumbre sobre tasas de interés', body:'Los principales índices bursátiles operan con movimientos moderados mientras los inversores aguardan señales de los bancos centrales sobre el rumbo de la política monetaria en los próximos meses.', time:'Hoy', link:'#' },
+  { src:'MarketWatch', domain:'marketwatch.com', headline:'Tecnológicas lideran las ganancias en Wall Street esta semana', body:'Las acciones del sector tecnológico encabezan el alza en los mercados estadounidenses, impulsadas por resultados corporativos mejores a los esperados y perspectivas positivas en inteligencia artificial.', time:'Hoy', link:'#' },
 ];
 
 let NEWS = [...NEWS_FALLBACK];
@@ -511,18 +509,33 @@ function stripHtml(html){
   t.innerHTML = html;
   return (t.textContent || t.innerText || '').replace(/\s+/g,' ').trim();
 }
-async function fetchNewsFromFeed(feed){
-  const r = await fetch(RSS_PROXY + encodeURIComponent(feed.url) + '&count=3');
-  const d = await r.json();
-  if(d.status !== 'ok' || !d.items?.length) return [];
-  return d.items.slice(0,3).map(item => ({
-    src: feed.name,
-    domain: feed.domain,
-    headline: stripHtml(item.title || '').slice(0,120),
-    body: stripHtml(item.description || item.content || '').slice(0,320) + '...',
-    time: timeAgo(item.pubDate),
-    link: item.link || '#',
+function parseRSS(xmlStr){
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  const items = Array.from(doc.querySelectorAll('item')).slice(0,3);
+  return items.map(item => ({
+    title: item.querySelector('title')?.textContent || '',
+    description: item.querySelector('description')?.textContent || '',
+    link: item.querySelector('link')?.textContent || item.querySelector('guid')?.textContent || '#',
+    pubDate: item.querySelector('pubDate')?.textContent || '',
   }));
+}
+async function fetchNewsFromFeed(feed){
+  try {
+    const r = await fetch(CORS + encodeURIComponent(feed.url));
+    const d = await r.json();
+    if(!d.contents) return [];
+    const items = parseRSS(d.contents);
+    if(!items.length) return [];
+    return items.map(item => ({
+      src: feed.name,
+      domain: feed.domain,
+      headline: stripHtml(item.title).slice(0,120),
+      body: stripHtml(item.description).slice(0,320) + '...',
+      time: timeAgo(item.pubDate),
+      link: item.link || '#',
+    }));
+  } catch(e){ return []; }
 }
 async function fetchAllNews(){
   const results = await Promise.allSettled(RSS_FEEDS.map(f => fetchNewsFromFeed(f)));
