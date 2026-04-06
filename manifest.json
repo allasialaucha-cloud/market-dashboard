@@ -1,0 +1,17 @@
+{
+  "name": "Market Dashboard",
+  "short_name": "Markets",
+  "description": "Dashboard de mercados financieros en tiempo real",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#060a0f",
+  "theme_color": "#060a0f",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/060a0f/00e676?text=M",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
