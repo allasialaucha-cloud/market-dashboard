@@ -306,7 +306,75 @@ body{display:flex;flex-direction:column;font-family:var(--head);}
 .wx-day-temps{font-family:var(--mono);font-size:10px;color:var(--muted);}
 .wx-day-temps b{color:var(--text);font-weight:400;}
 .wx-day-precip{font-family:var(--mono);font-size:9px;color:var(--blue);letter-spacing:0;}
-/* Fade transition for news */
+/* ── LANDSCAPE MOBILE ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Strip más compacto */
+  #strip { height: 26px; }
+  .strip-inner { gap: 20px; padding: 0 20px; }
+  .strip-item { font-size: 10px; gap: 5px; }
+  .ticker-logo { width: 14px; height: 14px; }
+
+  /* Zócalo más fino */
+  #socalo { height: 32px; }
+  .clock-val { font-size: 13px; letter-spacing: 1px; }
+  .clock-date { font-size: 8px; }
+  .soc-label { font-size: 7px; }
+  .soc-value { font-size: 11px; }
+  .weather-icon { font-size: 13px; }
+  .soc-block { padding: 0 10px; gap: 6px; }
+  .wx-forecast { gap: 0; }
+  .wx-day { padding: 0 6px; }
+  .wx-day-name { font-size: 7px; }
+  .wx-day-icon { font-size: 10px; }
+  .wx-day-temps { font-size: 8px; }
+  .wx-day-precip { font-size: 7px; }
+
+  /* Panel headers más finos */
+  .panel-header { padding: 5px 10px; }
+  .panel-label { font-size: 8px; letter-spacing: 2px; }
+  .edit-btn { font-size: 7px; padding: 2px 6px; }
+  .tf-btn { font-size: 8px; padding: 2px 5px; }
+  .live-badge { font-size: 7px; padding: 1px 5px; }
+
+  /* Noticias más compactas */
+  #news-content { padding: 8px 12px; }
+  .news-source { font-size: 8px; margin-bottom: 4px; }
+  .news-source-logo { width: 12px; height: 12px; }
+  .news-headline { font-size: clamp(13px, 2.5vw, 18px); margin-bottom: 6px; line-height: 1.15; }
+  .news-body { font-size: 10px; line-height: 1.4; }
+  .news-meta { margin-top: 4px; padding-top: 4px; font-size: 8px; }
+  .news-nav { padding: 5px 12px; }
+  .news-dot { width: 5px; height: 5px; }
+
+  /* Índices: 4 columnas, 2 filas comprimidas */
+  .indices-grid { grid-template-columns: repeat(4, 1fr); }
+  .idx-card { padding: 6px 8px; }
+  .idx-card-top { gap: 4px; margin-bottom: 2px; }
+  .idx-sym { font-size: 9px; margin-bottom: 1px; }
+  .idx-name { font-size: 7px; margin-bottom: 3px; }
+  .idx-price { font-size: 12px; margin-bottom: 1px; }
+  .idx-chg { font-size: 9px; }
+  .idx-logo { width: 14px; height: 14px; }
+
+  /* Cartera: 4 columnas, 2 filas comprimidas */
+  .portfolio-grid { grid-template-columns: repeat(4, 1fr); }
+  .port-card { padding: 5px 8px; }
+  .port-card-top { gap: 4px; margin-bottom: 1px; }
+  .port-sym { font-size: 9px; margin-bottom: 1px; letter-spacing: 1px; }
+  .port-name { font-size: 7px; margin-bottom: 2px; }
+  .port-price { font-size: 11px; }
+  .port-chg { font-size: 8px; margin-top: 1px; }
+  .port-bar { margin-top: 3px; height: 1px; }
+  .port-logo { width: 14px; height: 14px; }
+
+  /* BTC mini más pequeño */
+  #btc-mini { width: 120px; padding: 6px 8px; }
+  .btc-label { font-size: 7px; }
+  .btc-price { font-size: 12px; }
+  .btc-chg { font-size: 9px; }
+  #btc-canvas { width: 104px; height: 26px; }
+}
+
 .fade-out{animation:fadeOut .3s forwards;}
 .fade-in{animation:fadeIn .4s forwards;}
 @keyframes fadeOut{to{opacity:0;}}
